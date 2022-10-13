@@ -1,0 +1,42 @@
+- Training with SGD, 640 X 640 input image size, fine tuning:
+
+    python train.py --workers 4 --device 0 --batch-size 16 --epochs 100 --img 640 640 --data ../data_640X640_xywh_patch_cmc_all/cmc_wsi_coco.yaml --hyp ../data_640X640_xywh_patch_cmc_all/hyp.scratch.custom.yaml --cfg cfg/training/yolov7_cmc_wsi.yaml --name exp_A_9_ --weights yolov7.pt
+
+- Training with SGD, 320 X 320 input image size, fine tuning:
+
+    python train.py --workers 4 --device 0 --batch-size 32 --epochs 50 --img 320 320 --data ../data_320X320_xywh_patch_cmc_all/cmc_wsi_coco.yaml --hyp ../data_320X320_xywh_patch_cmc_all/hyp.scratch.custom.yaml --cfg cfg/training/yolov7_cmc_wsi.yaml --name exp_A_9_ --weights yolov7.pt
+
+- Training with Adam, 640 X 640 input image size, fine tuning:
+
+    python train.py --workers 4 --device 0 --batch-size 16 --epochs 100 --adam --img 640 640 --data ../data_640X640_xywh_patch_cmc_all/cmc_wsi_coco.yaml --hyp ../data_640X640_xywh_patch_cmc_all/hyp.scratch.custom.yaml --cfg cfg/training/yolov7_cmc_wsi.yaml --name exp_A_8_ --weights yolov7.pt
+
+
+
+    python train.py --workers 4 --device 0 --batch-size 32 --epochs 200 --freeze 51 --img 640 640 --save_period 50 --adam --data ../data_640X640_xywh_patch_cmc_wsi/cmc_wsi_coco.yaml --hyp ../data_640X640_xywh_patch_cmc_wsi/hyp.scratch.custom.yaml --cfg cfg/training/yolov7_cmc_wsi.yaml --name exp_A_4 --weights yolov7.pt
+
+    source activate pytorch
+
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/conda/envs/pytorch/lib
+
+    sudo mount /dev/nvme1n1 ebs_100g
+
+### Train using 320 X 320 sized AKIAJATRMFEAGB5EXSOQ
+
+- for training from scratch on AWS, batch size = 64
+
+python train.py --workers 1 --device 0 --batch-size 64 --epochs 100 --img 320 320 --data ../data_320X320_patch_cmc_wsi/cmc_wsi_coco.yaml --hyp ../data_320X320_patch_cmc_wsi/hyp.scratch.custom.yaml --cfg cfg/training/yolov7_cmc_wsi.yaml --name exp_size320_1_ --weights yolov7.pt
+
+
+python train.py --workers 1 --device 0 --batch-size 2 --epochs 100 --img 320 320 --data ../data_320X320_patch_cmc_wsi/cmc_wsi_coco.yaml --hyp ../data_320X320_patch_cmc_wsi/hyp.scratch.custom.yaml --cfg cfg/training/yolov7_cmc_wsi.yaml --name exp_size320_1 --weights yolov7.pt
+
+- for evolution from scratch on AWS, batch size = 64
+
+python train.py --workers 4 --device 0 --batch-size 64 --img 320 320 --evolve --adam --data ../data_320X320_patch_cmc_wsi/cmc_wsi_coco.yaml --hyp ../data_320X320_patch_cmc_wsi/hyp.scratch.custom.yaml --cfg cfg/training/yolov7_cmc_wsi.yaml --name exp_size320_5_ --weights best.pt
+
+- For testing
+
+  python test.py --data ../data_640X640_xywh_patch_cmc_all/cmc_wsi_coco.yaml --img 640 --batch 32 --conf 0.2 --iou 0.2 --device 0 --weights best.pt --name cmc_640_val
+
+- for detecting
+
+  python detect_mitotic.py --weights runs/train/exp_A_9_3/weights/best.pt --conf 0.25 --img-size 320 --save-txt --save-conf --class 1 --source /media/bony/Ganga_HDD_3TB/Ganges_Backup/Courses/FourthBrain_Cohort_8_June22_2022/capstone/data_320X320_xywh_patch_cmc_all/images/val/022857018aa597374b6c_103_203.jpeg
