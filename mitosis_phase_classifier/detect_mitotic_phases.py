@@ -14,10 +14,11 @@ def detect_mitotic_phases(data_dir, model_clsf, all_mitotic_detections):
 
     # get classifier model and set it to eval mode
     mitotic_clsf = get_model(model_clsf)
+    
     mitotic_clsf.eval()
 
     # iterate through the cropped images to perform classification
-    t0 = time.time()
+    #t0 = time.time()
     with torch.no_grad():
         for i, inputs in enumerate(dataloader):
             imgs = inputs[0] # batch of image file names
@@ -33,7 +34,7 @@ def detect_mitotic_phases(data_dir, model_clsf, all_mitotic_detections):
                 det_uid = img.split('.')[0]
                 all_mitotic_detections[det_uid].append(preds[i]) #append the mitotic phase for each detection in dict
 
-    print(f"time to classify mitotic detection areas : {time.time() - t0}")
+    #print(f"time to classify mitotic detection areas : {time.time() - t0}")
 
     #for k, v in all_mitotic_detections.items():
     #    print(k, v)
