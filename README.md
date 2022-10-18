@@ -1,7 +1,6 @@
 # Explainable-AI-for-Mitotic-Cell-Detection
----
 
-Explainability is a highly desired for AI system to be trusted in the medical field by doctors as well as patients. Our web application is designed to aid doctors and medical practitioners in the diagnosis of cancerous tissues from whole slide images.
+Explainability is essential and highly desired features in AI system for their adoption in medical field. This enables doctors, medical practitioners as well as patients to gain insight in the decision making process by AI systems. Our web application is designed to aid doctors and medical practitioners in the diagnosis of cancerous tissues from whole slide images.
 
 The App is designed to process whole slide images. It provides the following features:
 
@@ -28,16 +27,15 @@ For this task we segment the original WSI into smaller sized (320 X 320 pixels) 
 ### - Heatmap of mitotic count in 10 High Power field
 
 
----
 
-## data
-
-
----
-
-## model
+## Data
 
 
----
+
+
+## Model
+
+
+
 
 ## Architecture
