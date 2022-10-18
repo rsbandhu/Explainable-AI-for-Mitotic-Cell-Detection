@@ -10,7 +10,7 @@ def convert_local_to_global_coordinates(filename, detection, patch_size):
     to corodinates of the image from which patches were created
 
     """
-    print(detection)
+    #print(detection)
     # get the index of the patch in the WSI image at level 0
     f_n1_n2 = filename.split('_')
     n1 = int(f_n1_n2[1])
@@ -64,11 +64,15 @@ def get_detection_locations(all_detections, patch_size, mag_ratio=16):
         x2 = x_c +10 
         y2 = y_c +10
 
+        if detection[6] == 3:
+            color = 'blue'
+        else:
+            color = 'gold'
         shapes.append(dict(type="circle",
                            xref="x", yref="y",
                            x0=x1, y0=y1, x1=x2, y1=y2,
                            line_color='black',
-                           fillcolor='gold',
+                           fillcolor=color,
                            ))
 
     return shapes
@@ -81,7 +85,7 @@ def plot_all_detections_in_low_mag(all_detections, wsi_img_path, patch_size):
     #slide_path = os.path.join(wsi_img_path)  #basepath + os.sep + filename
     slide = openslide.open_slide(str(wsi_img_path))
     X, Y = slide.dimensions
-    print(f"size of slide: {slide.dimensions}")
+    #print(f"size of slide: {slide.dimensions}")
 
     ratio = 16 # scaling between highest mag and the lowest mag
 
@@ -164,8 +168,8 @@ def plot_all_detections_in_region(x, y, w, h , all_detections, wsi_img_path, pat
         label = class_names[label_idx].split('_')[-1]
         detect_prob = str(round(bbox_label[3],2))
 
-        print(c1)
-        print(c2)
+        #print(c1)
+        #print(c2)
 
         cv2.rectangle(img, c1, c2, color, thickness=tl, lineType=cv2.LINE_AA)
         cv2.putText(img, label, (c1[0], c1[1]-5), 0, 0.5, [0, 255, 0], thickness=tf, lineType=cv2.LINE_AA)
@@ -191,7 +195,7 @@ def find_detections_within_box(x_tl, y_tl,w,h, all_detections, patch_size):
         X_tl = n1 * patch_size
         Y_tl = n2 * patch_size
 
-        print(f"X_tl: {X_tl}, Y_tl: {Y_tl}, n1: {n1}, n2: {n2}")
+        #print(f"X_tl: {X_tl}, Y_tl: {Y_tl}, n1: {n1}, n2: {n2}")
 
         # coordinate of the bbox top left within the patch
         x1 = int(v[0])
@@ -200,8 +204,8 @@ def find_detections_within_box(x_tl, y_tl,w,h, all_detections, patch_size):
         # coordinate of the bbox bot right within the patch
         x2 = int(v[2])
         y2 = int(v[3])
-        print(v, x1, y1, x2, y2)
-        print(n1, n2, patch_size, X_tl, Y_tl, x_tl, y_tl)
+        #print(v, x1, y1, x2, y2)
+        #print(n1, n2, patch_size, X_tl, Y_tl, x_tl, y_tl)
 
         # coordinate of the bbox center within the patch
         x_c = int((x1+x2)/2)
@@ -220,8 +224,8 @@ def find_detections_within_box(x_tl, y_tl,w,h, all_detections, patch_size):
         x2 = x2 + X_tl - x_tl
         y2 = y2 + Y_tl - y_tl
 
-        print(v)
-        print(f"{(x1,y1)}  ::  {(x2,y2)}")
+        #print(v)
+        #print(f"{(x1,y1)}  ::  {(x2,y2)}")
 
         # Compare if the center of detection lies within our region of interest
         if (x_c  >= 0) and (x_c  <= w ) and (y_c >= 0) and (y_c <= h): # we found a detection inside our specified box

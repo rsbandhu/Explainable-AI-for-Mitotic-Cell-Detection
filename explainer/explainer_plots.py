@@ -7,7 +7,7 @@ from matplotlib import cm, colors, pyplot as plt
 from matplotlib.collections import LineCollection
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.figure import Figure
-from matplotlib.pyplot import axis, figure
+from matplotlib.pyplot import axis, figure, title
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from numpy import ndarray
 
@@ -80,6 +80,20 @@ def plot_attributions(original_image, attributions, cmaps, titles):
         h.set(yticklabels=[])
         axes[i, 0].set_title("Original Image")
 
+    return fig
+
+
+def plot_width_height(widths, heights):
+
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(14, 5))
+
+    sns.histplot(data= widths, ax=axes[0], binwidth=5).set(title='Mitotic bounding box Width Distribution')
+    axes[0].set_xlabel('Bounding box width (pixels)')
+
+    sns.histplot(data=heights, ax=axes[1], binwidth=5).set(title='Mitotic bounding box Height Distribution')
+    axes[1].set_xlabel('Bounding box height (pixels)')
+    
+    fig.suptitle('Mitotic boundoing box size in pixels')
     return fig
 
 def cumulative_sum_threshold(values: ndarray, percentile: Union[int, float]):
@@ -207,4 +221,32 @@ def plot_heatmap(img1_orig, norm_attr,  cmap, vmin, vmax, method: str = "heat_ma
 
     return plt_fig
 
+
+def plot_count_heatmap(img, detections_10hpf):
+    
+    fig = plt.figure(figsize=(8, 8))
+    
+    vmin = np.min(detections_10hpf)
+    vmax = np.max(detections_10hpf)
+
+    w = detections_10hpf.shape[0]
+    h = detections_10hpf.shape[1]
+
+    print(w,h)
+
+    sns.set(font_scale=1.2)  # for label size
+    hmax = sns.heatmap(detections_10hpf,  vmin=vmin, vmax=vmax, cmap='Reds', cbar_kws={"shrink": 0.75}, alpha=0.7, zorder=2)
+    hmax.imshow(img, zorder=1)  # pu
+
+    # <--- set the ticks first
+    #hmax.set_xticks(labels=[500*i for i in range(int(w/500))])
+    hmax.set(xticklabels=[])
+    hmax.set(yticklabels=[])
+
+    plt.title('Mitotic count in 10 HPF view', color="Blue", fontsize=20)
+    #hmax.set_xticklabels([500*i for i in range(int(w/500))])
+    #plt.xlabel('Ground Truth', fontsize=24, color='red')
+    #plt.ylabel('Prediction', fontsize=24, color='red')
+
+    return fig
 
