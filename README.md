@@ -10,7 +10,7 @@ The App is designed to process whole slide images. It provides the following fea
 
 For this task we segment the original WSI into smaller sized (320 X 320 pixels) patches. We use YOLOV7 for detecting mitotic cells in these small patches. We used the canine breast cancer dataset to train the model.
 
-
+![Alt text](./images/detections_on_WSI.png?raw=true "Mitotic Detection Map")
 ---
 
 ### Mitotic Phase classification of each Detection
