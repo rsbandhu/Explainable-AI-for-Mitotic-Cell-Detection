@@ -43,14 +43,11 @@ We use the following methods to gain visual Explainable features that contribute
 
 ## Data
 
-
-
-
+We used 21 whole slide images with annotations by 3 experts for training and validation of our app. These images have been made available for public use from the histopathology archive of an author (R.K.) with approval by the local governmental authorities (State Office of Health and Social Affairs of Berlin, approval ID: StN 011/20). The tissue samples were collected from dog's breast and were stained with H&E stains. They can be downloaded from https://doi.org/10.6084/m9.figshare.c.4951281. These files are in Aperio svs format.
 
 ## Model
 
-
-
+We have used YOLOV7 for detection and Resnet50 for classification into mitotic phases of the detected cells. We have fine tuned YOLOV7 using the whole slide images and associated annotations. We have labeled the about 650 of these mitotic cells into 3 mitotic phases (Prpphase, metaphase and Anaphase / Telophase) for fine tuning the classifier model.
 
 ## Architecture
 
