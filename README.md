@@ -64,3 +64,29 @@ We leverage the following packages for building the app:
 * AWS - for hosting the App
 
 <img src="./images/arch.png" width="430" height="180">
+
+## Install and Run
+
+Create a new conda environments
+```
+conda create -n your_new_env_name python=3.8
+```
+
+Install openslide from https://openslide.org/download/
+
+For Ubuntu systems, run
+```
+sudo apt-get install openslide-tools
+```
+
+Install requirements
+
+```
+pip install -r requirements.text
+```
+
+To run the app
+
+```
+streamlit run main_app.py --server.maxUploadSize 4096
+```
