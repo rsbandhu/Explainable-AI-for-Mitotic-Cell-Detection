@@ -65,8 +65,8 @@ def occlusion(img, model, target):
     
     occlusion = Occlusion(model)
     attributions_occ = occlusion.attribute(img,
-                        strides=(3, 8, 8), target=target, 
-                        sliding_window_shapes=(3, 15, 15), baselines=0)
+                        strides=(3, 5, 5), target=target, 
+                        sliding_window_shapes=(3, 12, 12), baselines=0)
 
     attributions_occ = np.transpose(attributions_occ.squeeze(), (1, 2, 0))
 

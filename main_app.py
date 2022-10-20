@@ -1,4 +1,3 @@
-#from dis import dis
 from re import A
 import matplotlib.image as mpimg
 
@@ -219,19 +218,24 @@ img_mean_threshold = opt.img_mean_thres # 235 # max value of each channel mean
 # Define directories
 detects_dir = 'data/detections'
 
-st.markdown("## Welcome to Mitosis Detector 🎈")
+st.markdown("# Welcome to MitoScope")
+
+st.markdown("### Mitoscope analyzes whole slide Images of tissues that are suspected to have cancerous cells. Following features are currently supported: ")
+
+st.markdown("- Mitotic detection map on the whole slide image \n - Zoom in on any detection and see the associated mitotic phase \n - Visual attribution maps (in the zoomed region) that helps understand why it is classified as mitotic \n - Mitotic count map in 10 consecutive High Power Field")
 # Upload the WSI file
 with st.sidebar:
     #st.markdown("# Main page 🎈")
 
     st.subheader("Upload your Image")
-    image_file = st.file_uploader("Upload a Image", type=["svs", "jpeg"])
+    image_file = st.file_uploader("", type=["svs"])
     #file_name = image_file.name
     #st.write(file_name)
 
 #save_img_path, filename = upload_image(image_file, detects_dir)
 st.success("WSI image has been uploaded")
 
+st.markdown("---")
 # Create the directories where images for detection and classification will be saved
 
 filename = '4eee7b944ad5e46c60ce.svs'
@@ -261,9 +265,9 @@ slide = openslide.open_slide(str(slide_path))
 dims = slide.level_dimensions
 mag_ratio = dims[0][0]/dims[-1][0]
 
-st.subheader(f"Image File Name: {filename}")
-st.subheader(f"Slide full size dimension: {wsi_x, wsi_y}")
-st.subheader(f"Number of magnification Levels in WSI: {len(dims)}")
+st.markdown(f"**Image File Name: {filename}**")
+st.markdown(f"**Slide dimension at highest magnification: {wsi_x, wsi_y}**")
+st.markdown(f"**Number of magnification Levels in WSI: {len(dims)}**")
 
 # Create state dict to pass to the other pages in app
 wsi_state_dict = {}
@@ -274,7 +278,9 @@ wsi_state_dict["mag_ratio"] = mag_ratio
 wsi_state_dict["save_img_path"] = save_img_path
 wsi_state_dict["img"] = None
 
+
 with st.sidebar:
+    st.markdown("---")
     disp_wsi = st.button('Display WSI')
 
 if "disp_wsi" not in st.session_state or disp_wsi:
@@ -297,6 +303,7 @@ if st.session_state["disp_wsi"]:
     wsi_state_dict["img"] = img
 
 with st.sidebar:
+    st.markdown("---")
     detect_classify = st.button("Perform Mitotic Detection and Classification")
 
 if detect_classify:

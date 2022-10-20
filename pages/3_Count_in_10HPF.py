@@ -24,10 +24,10 @@ def plot_mitotic_in_10HPF(all_mitotic_detections, img, patch_size, dims, microns
 
     max_count = np.max(detections_10hpf)
     if (max_count > 7):
-        target_text = f"High mitotic count in 10 HPF: {max_count}, greater than threshold of normal value 7"
+        target_text = f"High mitotic count in 10 consecutive HPF: {max_count}, greater than threshold of normal value 7. This is considered to be high grade tumor"
 
     else:
-        target_text = f"Mitotic Count is normal. Max count in 10 HPF is {max_count}"
+        target_text = f"Mitotic Count is normal. Max count in 10 consecutive HPF is {max_count}"
     
     fig = plot_count_heatmap(img, detections_10hpf)
 
@@ -36,11 +36,11 @@ def plot_mitotic_in_10HPF(all_mitotic_detections, img, patch_size, dims, microns
 
     print("done creating heatmaps", detections_10hpf.shape)
 
-
+st.header("Mitotic Count map in 10 consecutive High Power Field (Area ~ 2.37 sq mm)")
 if "fig_10hpf" not in st.session_state or "10hpf_text" not in st.session_state:
     plot_mitotic_in_10HPF(all_mitotic_detections, img, patch_size,
                       dims, microns_per_pixel)
 
 st.write(st.session_state["fig_10hpf"])
 st.markdown(
-    f'<h1 style="color:#33ff33;font-size:28px;">{st.session_state["10hpf_text"]}</h1>', unsafe_allow_html=True)
+    f'<h3 style="color:#0000FF;font-size:20px;">{st.session_state["10hpf_text"]}</h3>', unsafe_allow_html=True)
