@@ -143,6 +143,7 @@ def plot_all_detections_in_region(x, y, w, h , all_detections, wsi_img_path, pat
     x, y : coordinate of the top left corner of the region of interest in low mag
     """
     #slide_path = os.path.join(wsi_img_path)  #basepath + os.sep + filename
+    imgs = {} # this is where we will store the zoomed in region at highest mag for each detection
     slide = openslide.open_slide(str(wsi_img_path))
     X,Y = slide.dimensions
     print(f"size of slide: {slide.dimensions}")
@@ -159,7 +160,7 @@ def plot_all_detections_in_region(x, y, w, h , all_detections, wsi_img_path, pat
 
     tl = 2
     tf =1 
-    color = [125,125,125]
+    color = [0,0,255]
 
     for det_c, bbox_label in detections_inside_box.items():
         c1 = bbox_label[0]
@@ -168,15 +169,74 @@ def plot_all_detections_in_region(x, y, w, h , all_detections, wsi_img_path, pat
         label = class_names[label_idx].split('_')[-1]
         detect_prob = str(round(bbox_label[3],2))
 
+        top_left_level0 = bbox_label[4]
+
         #print(c1)
         #print(c2)
 
-        cv2.rectangle(img, c1, c2, color, thickness=tl, lineType=cv2.LINE_AA)
-        cv2.putText(img, label, (c1[0], c1[1]-5), 0, 0.5, [0, 255, 0], thickness=tf, lineType=cv2.LINE_AA)
+        cv2.rectangle(img, c1, c2, color, thickness=tl)
+        cv2.putText(img, label, (c1[0], c1[1]-5), 0, 0.5, [255, 0, 0], thickness=tf) #lineType=cv2.LINE_AA
         cv2.putText(img, f'P= {detect_prob}', (c2[0], c2[1]-5), 0, 0.5,
-                    [125, 125, 125], thickness=tf, lineType=cv2.LINE_AA)
+                    [255, 255, 255], thickness=tf)  # lineType=cv2.LINE_AA
+        
+        det_image = np.asarray(slide.read_region(
+            top_left_level0, level=0, size=(80, 80)))
+        
+        imgs[det_c] = det_image
 
-    return img, detections_inside_box
+    return img, detections_inside_box, imgs
+
+
+def plot_detections_in_zoomed_region(x, y, w, h, all_detections, wsi_img_path, patch_size, class_names):
+    """
+    x, y : coordinate of the top left corner of the region of interest in low mag
+    """
+    #slide_path = os.path.join(wsi_img_path)  #basepath + os.sep + filename
+    slide = openslide.open_slide(str(wsi_img_path))
+    X, Y = slide.dimensions
+    print(f"size of slide: {slide.dimensions}")
+
+    ratio = 16
+
+    # convert coordinate from lower level to level 0 (higher mag)
+    X_tl = x*ratio
+    Y_tl = y*ratio
+
+    img = np.asarray(slide.read_region((X_tl, Y_tl), level=0, size=(640, 640)))
+
+    detections_inside_box = find_detections_within_box(
+        X_tl, Y_tl, w, h, all_detections, patch_size)
+
+    tl = 2
+    tf = 1
+    color = [0, 0, 255]
+    shapes = []
+    locs_labels = []
+
+    for det_c, bbox_label in detections_inside_box.items():
+        c1 = bbox_label[0]
+        c2 = bbox_label[1]
+        label_idx = int(bbox_label[2])
+        label = class_names[label_idx].split('_')[-1]
+        detect_prob = str(round(bbox_label[3], 2))
+
+        #print(c1)
+        #print(c2)
+        shapes.append(dict(type="rect",
+                           xref="x", yref="y",
+                           x0=c1[0], y0=c1[1], x1=c2[0], y1=c2[1],
+                           line_color='black'))
+        
+        locs_labels.append([c1, c2, label, detect_prob])
+        #cv2.rectangle(img, c1, c2, color, thickness=tl)
+        # lineType=cv2.LINE_AA
+        #cv2.putText(img, label, (c1[0], c1[1]-5),
+        #            0, 0.5, [255, 0, 0], thickness=tf)
+        #cv2.putText(img, f'P= {detect_prob}', (c2[0], c2[1]-5), 0, 0.5,
+        #            [255, 255, 255], thickness=tf)  # lineType=cv2.LINE_AA
+
+    return img, shapes, locs_labels
+
 
 def find_detections_within_box(x_tl, y_tl,w,h, all_detections, patch_size):
 
@@ -230,7 +290,7 @@ def find_detections_within_box(x_tl, y_tl,w,h, all_detections, patch_size):
         # Compare if the center of detection lies within our region of interest
         if (x_c  >= 0) and (x_c  <= w ) and (y_c >= 0) and (y_c <= h): # we found a detection inside our specified box
             label = str(v[6])
-            detections[k] = [(x1, y1), (x2, y2),label, round(v[4],3)]
+            detections[k] = [(x1, y1), (x2, y2),label, round(v[4],3), (x1+x_tl, y1+y_tl)]
 
     return detections
 
