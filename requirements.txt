@@ -12,12 +12,12 @@ torch>=1.7.0,!=1.12.0
 torchvision>=0.8.1,!=0.13.0
 tqdm>=4.41.0
 protobuf<4.21.3
-openslide         #reading WSI
+# openslide    #run as sudo apt-get install openslide-tools     #reading WSI
 openslide-python  #reading WSI
 
 streamlit >= 1.13.0
 scikit-learn>=1.1.1
-
+captum>=0.5.0
 # Logging -------------------------------------
 tensorboard>=2.4.1
 # wandb
