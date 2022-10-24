@@ -45,6 +45,9 @@ def upload_image(image_file, detects_dir):
 
         #Saving image file in a WSI folder
         image_name = image_file.name
+        if not os.path.exists(detects_dir):
+            os.mkdir(detects_dir)
+
         image_folder = os.path.join(detects_dir, image_name.split('.')[0])
 
         if not os.path.exists(image_folder):
@@ -232,51 +235,52 @@ with st.sidebar:
     #file_name = image_file.name
     #st.write(file_name)
 
-#save_img_path, filename = upload_image(image_file, detects_dir)
-st.success("WSI image has been uploaded")
+if image_file:
+    save_img_path, filename = upload_image(image_file, detects_dir)
+    st.success("WSI image has been uploaded")
 
-st.markdown("---")
-# Create the directories where images for detection and classification will be saved
+    st.markdown("---")
+    # Create the directories where images for detection and classification will be saved
 
-filename = '4eee7b944ad5e46c60ce.svs'
-print(os.getcwd())
+    filename = '4eee7b944ad5e46c60ce.svs'
+    print(os.getcwd())
 
-save_img_path = os.path.join('data', filename)
-print(f"save image path : {save_img_path}")
-if not os.path.exists(save_img_path):
-    os.mkdir(save_img_path)
+    #save_img_path = os.path.join('data', filename)
+    print(f"save image path : {save_img_path}")
+    if not os.path.exists(save_img_path):
+        os.mkdir(save_img_path)
 
-data_detections_dir = f"{detects_dir}/{filename.split('.')[0]}/filepatch_detections"
-opt.data_detections_dir = data_detections_dir
-data_clsf_dir = f"{detects_dir}/{filename.split('.')[0]}/mitosis_classifications"
-opt.data_clsf_dir = data_clsf_dir
+    data_detections_dir = f"{detects_dir}/{filename.split('.')[0]}/filepatch_detections"
+    opt.data_detections_dir = data_detections_dir
+    data_clsf_dir = f"{detects_dir}/{filename.split('.')[0]}/mitosis_classifications"
+    opt.data_clsf_dir = data_clsf_dir
 
-if not os.path.exists(data_detections_dir):
-    os.mkdir(data_detections_dir)
+    if not os.path.exists(data_detections_dir):
+        os.mkdir(data_detections_dir)
 
-if not os.path.exists(data_clsf_dir):
-    os.mkdir(data_clsf_dir)
+    if not os.path.exists(data_clsf_dir):
+        os.mkdir(data_clsf_dir)
 
-# open ths slide and get relevant properties
-slide_path = os.path.join(save_img_path)
-slide = openslide.open_slide(str(slide_path))
+    # open ths slide and get relevant properties
+    slide_path = save_img_path #os.path.join(save_img_path)
+    slide = openslide.open_slide(str(slide_path))
 
-(wsi_x, wsi_y) = slide.dimensions  # get X and Y pixel counts of WSI
-dims = slide.level_dimensions
-mag_ratio = dims[0][0]/dims[-1][0]
+    (wsi_x, wsi_y) = slide.dimensions  # get X and Y pixel counts of WSI
+    dims = slide.level_dimensions
+    mag_ratio = dims[0][0]/dims[-1][0]
 
-st.markdown(f"**Image File Name: {filename}**")
-st.markdown(f"**Slide dimension at highest magnification: {wsi_x, wsi_y}**")
-st.markdown(f"**Number of magnification Levels in WSI: {len(dims)}**")
+    st.markdown(f"**Image File Name: {filename}**")
+    st.markdown(f"**Slide dimension at highest magnification: {wsi_x, wsi_y}**")
+    st.markdown(f"**Number of magnification Levels in WSI: {len(dims)}**")
 
-# Create state dict to pass to the other pages in app
-wsi_state_dict = {}
-wsi_state_dict["patch_size"] = opt.image_size_detection
-wsi_state_dict["level_dims"] = dims
-wsi_state_dict["microns_per_pixel"] = opt.microns_per_pixel
-wsi_state_dict["mag_ratio"] = mag_ratio
-wsi_state_dict["save_img_path"] = save_img_path
-wsi_state_dict["img"] = None
+    # Create state dict to pass to the other pages in app
+    wsi_state_dict = {}
+    wsi_state_dict["patch_size"] = opt.image_size_detection
+    wsi_state_dict["level_dims"] = dims
+    wsi_state_dict["microns_per_pixel"] = opt.microns_per_pixel
+    wsi_state_dict["mag_ratio"] = mag_ratio
+    wsi_state_dict["save_img_path"] = save_img_path
+    wsi_state_dict["img"] = None
 
 
 with st.sidebar:
